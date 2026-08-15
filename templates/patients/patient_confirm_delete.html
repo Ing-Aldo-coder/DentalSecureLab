@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Eliminar paciente | DentalSecureLab
+{% endblock %}
+
+{% block content %}
+
+<h2>Eliminar paciente</h2>
+
+<div class="detail-card">
+
+    <p>
+        ¿Deseas eliminar a
+        <strong>{{ patient.first_name }} {{ patient.last_name }}</strong>?
+    </p>
+
+    <p class="warning">
+        Esta acción no se puede deshacer.
+    </p>
+
+    <form method="POST">
+        {% csrf_token %}
+
+        <button type="submit" class="btn-danger">
+            Sí, eliminar
+        </button>
+
+        <a href="{% url 'patient_detail' patient.pk %}"
+           class="btn-secondary">
+            Cancelar
+        </a>
+    </form>
+
+</div>
+
+{% endblock %}

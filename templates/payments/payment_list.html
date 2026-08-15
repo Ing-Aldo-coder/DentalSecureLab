@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Pagos | DentalSecureLab
+{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+
+    <div>
+        <h2>Pagos</h2>
+        <p>Movimientos registrados</p>
+    </div>
+
+    <a href="{% url 'payment_create' %}" class="btn">
+        Registrar pago
+    </a>
+
+</div>
+
+<table class="table">
+
+    <thead>
+        <tr>
+            <th>Fecha</th>
+            <th>Paciente</th>
+            <th>Concepto</th>
+            <th>Método</th>
+            <th>Monto</th>
+            <th></th>
+        </tr>
+    </thead>
+
+    <tbody>
+
+        {% for payment in payments %}
+
+        <tr>
+            <td>{{ payment.date|date:"d/m/Y" }}</td>
+
+            <td>{{ payment.patient }}</td>
+
+            <td>{{ payment.concept }}</td>
+
+            <td>
+                {{ payment.get_payment_method_display }}
+            </td>
+
+            <td>
+                ${{ payment.amount }}
+            </td>
+
+            <td>
+                <a href="{% url 'payment_update' payment.pk %}">
+                    Editar
+                </a>
+            </td>
+        </tr>
+
+        {% empty %}
+
+        <tr>
+            <td colspan="6">
+                No hay pagos registrados.
+            </td>
+        </tr>
+
+        {% endfor %}
+
+    </tbody>
+
+</table>
+
+{% endblock %}

@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Paciente | DentalSecureLab
+{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+    <div>
+        <h2>{{ patient.first_name }} {{ patient.last_name }}</h2>
+        <p>Información del paciente</p>
+    </div>
+
+    <div>
+        <a href="{% url 'patient_update' patient.pk %}" class="btn">
+            Editar
+        </a>
+
+        <a href="{% url 'patient_delete' patient.pk %}" class="btn-danger">
+            Eliminar
+        </a>
+    </div>
+</div>
+
+<div class="detail-card">
+
+    <p>
+        <strong>Fecha de nacimiento:</strong>
+        {{ patient.birth_date|date:"d/m/Y" }}
+    </p>
+
+    <p>
+        <strong>Teléfono:</strong>
+        {{ patient.phone|default:"No registrado" }}
+    </p>
+
+    <p>
+        <strong>Correo electrónico:</strong>
+        {{ patient.email|default:"No registrado" }}
+    </p>
+
+    <p>
+        <strong>Dirección:</strong>
+        {{ patient.address|default:"No registrada" }}
+    </p>
+
+    <p>
+        <strong>Fecha de registro:</strong>
+        {{ patient.created_at|date:"d/m/Y H:i" }}
+    </p>
+
+</div>
+
+<br>
+
+<a href="{% url 'patient_list' %}" class="btn-secondary">
+    Volver a pacientes
+</a>
+
+{% endblock %}

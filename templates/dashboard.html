@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Dashboard | DentalSecureLab
+{% endblock %}
+
+{% block content %}
+
+<h2>Dashboard</h2>
+
+<div class="cards">
+
+    <div class="card">
+        <h3>Pacientes</h3>
+        <p>{{ total_patients }} registrados</p>
+    </div>
+
+    <div class="card">
+        <h3>Citas de hoy</h3>
+        <p>{{ today_appointments }} citas</p>
+    </div>
+
+    <div class="card">
+        <h3>Expedientes</h3>
+        <p>{{ total_records }} expedientes</p>
+    </div>
+
+    <div class="card">
+        <h3>Pagos</h3>
+        <p>${{ total_payments|floatformat:2 }}</p>
+    </div>
+
+</div>
+
+{% endblock %}

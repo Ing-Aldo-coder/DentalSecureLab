@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Nuevo paciente | DentalSecureLab
+{% endblock %}
+
+{% block content %}
+
+<h2>{{ title }}</h2>
+
+<form method="POST" class="form">
+
+    {% csrf_token %}
+
+    {{ form.as_p }}
+
+    <div class="form-actions">
+
+        <button type="submit" class="btn">
+            Guardar paciente
+        </button>
+
+        <a href="{% url 'patient_list' %}" class="btn-secondary">
+            Cancelar
+        </a>
+
+    </div>
+
+</form>
+
+{% endblock %}

@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Agenda | DentalSecureLab
+{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+
+    <div>
+        <h2>Agenda</h2>
+        <p>Citas registradas</p>
+    </div>
+
+    <a href="{% url 'appointment_create' %}" class="btn">
+        Nueva cita
+    </a>
+
+</div>
+
+<table class="table">
+
+    <thead>
+        <tr>
+            <th>Fecha</th>
+            <th>Hora</th>
+            <th>Paciente</th>
+            <th>Motivo</th>
+            <th>Estado</th>
+            <th></th>
+        </tr>
+    </thead>
+
+    <tbody>
+
+        {% for appointment in appointments %}
+
+        <tr>
+            <td>{{ appointment.date|date:"d/m/Y" }}</td>
+
+            <td>{{ appointment.time|time:"H:i" }}</td>
+
+            <td>{{ appointment.patient }}</td>
+
+            <td>{{ appointment.reason }}</td>
+
+            <td>{{ appointment.get_status_display }}</td>
+
+            <td>
+                <a href="{% url 'appointment_update' appointment.pk %}">
+                    Editar
+                </a>
+            </td>
+        </tr>
+
+        {% empty %}
+
+        <tr>
+            <td colspan="6">
+                No hay citas registradas.
+            </td>
+        </tr>
+
+        {% endfor %}
+
+    </tbody>
+
+</table>
+
+{% endblock %}

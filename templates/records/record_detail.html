@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Expediente | DentalSecureLab
+{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+
+    <div>
+        <h2>
+            Expediente de {{ record.patient }}
+        </h2>
+    </div>
+
+    <a href="{% url 'record_update' record.pk %}"
+       class="btn">
+        Editar expediente
+    </a>
+
+</div>
+
+<div class="detail-card">
+
+    <p>
+        <strong>Motivo de consulta:</strong><br>
+        {{ record.reason }}
+    </p>
+
+    <p>
+        <strong>Diagnóstico:</strong><br>
+        {{ record.diagnosis|default:"Sin diagnóstico" }}
+    </p>
+
+    <p>
+        <strong>Tratamiento:</strong><br>
+        {{ record.treatment|default:"Sin tratamiento registrado" }}
+    </p>
+
+    <p>
+        <strong>Observaciones:</strong><br>
+        {{ record.observations|default:"Sin observaciones" }}
+    </p>
+
+</div>
+
+{% endblock %}

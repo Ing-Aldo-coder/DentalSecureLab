@@ -1,0 +1,37 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}DentalSecureLab{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+</head>
+<body>
+
+    <header class="topbar">
+        <h1>DentalSecureLab</h1>
+        <span>Laboratorio de Seguridad</span>
+    </header>
+
+    <div class="layout">
+
+        <aside class="sidebar">
+            <nav>
+                <a href="/">Dashboard</a>
+                <a href="{% url 'patient_list' %}">Pacientes</a>
+                <a href="{% url 'appointment_list' %}">Agenda</a>
+                <a href="{% url 'record_list' %}">Expedientes</a>
+                <a href="{% url 'payment_list' %}">Pagos</a>
+            </nav>
+        </aside>
+
+        <main class="content">
+            {% block content %}
+            {% endblock %}
+        </main>
+
+    </div>
+
+</body>
+</html>
