@@ -46,3 +46,7 @@ class MedicalRecord(models.Model):
     class Meta:
         verbose_name = 'Expediente'
         verbose_name_plural = 'Expedientes'
+
+
+from auditlog.registry import auditlog
+auditlog.register(MedicalRecord)
