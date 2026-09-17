@@ -9,17 +9,41 @@
         <p style="color: #64748b; font-size: 0.95rem;">DentalSecureLab - Autenticación Segura</p>
     </div>
 
-    <!-- Notificación de Control y Seguridad Activa (Protección contra Fuerza Bruta) -->
-    <div style="background-color: #fef2f2; border: 1px solid #ef4444; border-radius: 6px; padding: 10px 14px; margin-bottom: 20px; text-align: left;">
-        <div style="font-weight: 700; color: #991b1b; font-size: 0.88rem; margin-bottom: 3px;">
-            ⚠️ Límite activo: Máximo 5 intentos/min por IP
+    <!-- Bloqueo Activo por Exceder Intentos (HTTP 429) -->
+    {% if is_blocked %}
+        <div style="background-color: #fef2f2; border: 2px solid #dc2626; border-radius: 8px; padding: 18px; margin-bottom: 24px; text-align: center;">
+            <div style="font-size: 2rem; margin-bottom: 6px;">🚫</div>
+            <h3 style="color: #991b1b; margin: 0 0 6px 0; font-size: 1.1rem; font-weight: 700;">Acceso Bloqueado Temporalmente</h3>
+            <p style="color: #b91c1c; font-size: 0.9rem; margin: 0 0 10px 0; line-height: 1.4;">
+                Se ha excedido el límite de intentos permitidos.<br>
+                El acceso desde su dirección IP está bloqueado por <strong>{{ remaining_time }}</strong> por políticas de seguridad.
+            </p>
+            <div style="font-size: 0.78rem; color: #7f1d1d; background: #fee2e2; padding: 6px 10px; border-radius: 4px; display: inline-block;">
+                🛡️ Control activo contra ataques de fuerza bruta y diccionario
+            </div>
         </div>
-        <div style="color: #b91c1c; font-size: 0.82rem; font-weight: 500;">
-            Protección contra fuerza bruta y diccionario
-        </div>
-    </div>
+    {% endif %}
 
-    {% if messages %}
+    <!-- Notificación Preventiva Activa (Aparece a partir del Intento 2) -->
+    {% if show_alert and not is_blocked %}
+        <div style="background-color: #fef2f2; border: 1px solid #ef4444; border-radius: 6px; padding: 12px 14px; margin-bottom: 20px; text-align: left;">
+            <div style="font-weight: 700; color: #991b1b; font-size: 0.88rem; margin-bottom: 3px;">
+                ⚠️ Límite activo: Máximo 5 intentos/min por IP
+            </div>
+            <div style="color: #b91c1c; font-size: 0.82rem; font-weight: 500; margin-bottom: 6px;">
+                Protección contra fuerza bruta y diccionario
+            </div>
+            <div style="color: #7f1d1d; font-size: 0.82rem; font-weight: 600; padding-top: 6px; border-top: 1px dashed #fca5a5;">
+                {% if in_post_block %}
+                    ⚠️ Advertencia: Intento fallido tras reactivación. Le queda {{ remaining_attempts }} intento antes de un bloqueo extendido de 30 minutos.
+                {% else %}
+                    ⚠️ Advertencia: Intento fallido {{ failed_attempts }} de {{ max_attempts }}. Le quedan {{ remaining_attempts }} intento(s) antes del bloqueo temporal de 5 minutos.
+                {% endif %}
+            </div>
+        </div>
+    {% endif %}
+
+    {% if messages and not is_blocked %}
         <div style="margin-bottom: 20px;">
             {% for message in messages %}
                 <div style="padding: 12px; border-radius: 6px; margin-bottom: 10px; font-size: 0.9rem; {% if message.tags == 'error' %}background-color: #fee2e2; color: #991b1b; border: 1px solid #f87171;{% else %}background-color: #e0f2fe; color: #075985; border: 1px solid #7dd3fc;{% endif %}">
@@ -29,28 +53,22 @@
         </div>
     {% endif %}
 
-    {% if rate_limited %}
-        <div style="padding: 14px; border-radius: 6px; background-color: #fee2e2; color: #991b1b; border: 1px solid #ef4444; margin-bottom: 20px; font-weight: 500;">
-            ⚠️ Control de Seguridad: Límite de 5 intentos por minuto excedido. Su IP se encuentra temporalmente bloqueada.
-        </div>
-    {% endif %}
-
     <form method="POST" action="{% url 'login' %}" style="display: flex; flex-direction: column; gap: 16px;">
         {% csrf_token %}
 
         <div>
             <label for="id_username" style="display: block; font-weight: 600; margin-bottom: 6px; color: #334155;">Nombre de Usuario</label>
-            <input type="text" name="username" autofocus required id="id_username" class="form-control" style="width: 100%; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 1rem; box-sizing: border-box;">
+            <input type="text" name="username" autofocus required id="id_username" class="form-control" {% if is_blocked %}disabled{% endif %} style="width: 100%; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 1rem; box-sizing: border-box; {% if is_blocked %}background-color: #f1f5f9; cursor: not-allowed;{% endif %}">
         </div>
 
         <div>
             <label for="id_password" style="display: block; font-weight: 600; margin-bottom: 6px; color: #334155;">Contraseña</label>
-            <input type="password" name="password" required id="id_password" class="form-control" style="width: 100%; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 1rem; box-sizing: border-box;">
+            <input type="password" name="password" required id="id_password" class="form-control" {% if is_blocked %}disabled{% endif %} style="width: 100%; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 1rem; box-sizing: border-box; {% if is_blocked %}background-color: #f1f5f9; cursor: not-allowed;{% endif %}">
         </div>
 
         <div style="margin-top: 8px;">
-            <button type="submit" class="btn" style="width: 100%; padding: 12px; background-color: #0284c7; color: white; border: none; border-radius: 6px; font-weight: 600; cursor: pointer; font-size: 1rem;">
-                Ingresar a la Plataforma
+            <button type="submit" class="btn" {% if is_blocked %}disabled{% endif %} style="width: 100%; padding: 12px; background-color: {% if is_blocked %}#94a3b8{% else %}#0284c7{% endif %}; color: white; border: none; border-radius: 6px; font-weight: 600; cursor: {% if is_blocked %}not-allowed{% else %}pointer{% endif %}; font-size: 1rem;">
+                {% if is_blocked %}Acceso Bloqueado Temporalmente{% else %}Ingresar a la Plataforma{% endif %}
             </button>
         </div>
     </form>

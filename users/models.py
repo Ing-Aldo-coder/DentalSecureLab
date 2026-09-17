@@ -33,6 +33,29 @@ class UserProfile(models.Model):
         verbose_name_plural = 'Perfiles de Usuario'
 
 
+class LoginAttemptTracker(models.Model):
+    """
+    Control progresivo de intentos de autenticación y mitigación de fuerza bruta.
+    - Intentos 1 a 4: Conteo progresivo con advertencia activa a partir del intento 2.
+    - Intento 5: Bloqueo temporal inmediato por 5 minutos.
+    - Reincidencia post-bloqueo: 2 intentos de gracia antes de bloqueo extendido por 30 minutos.
+    - Éxito en cualquier paso: Reseteo total inmediato a cero.
+    """
+    ip_address = models.CharField('Dirección IP', max_length=45, unique=True)
+    failed_attempts = models.PositiveIntegerField('Intentos Fallidos', default=0)
+    blocked_until = models.DateTimeField('Bloqueado Hasta', null=True, blank=True)
+    stage = models.PositiveSmallIntegerField('Fase de Bloqueo', default=0) # 0: Normal, 1: Post 5min, 2: Bloqueo 30min
+    post_block_attempts = models.PositiveIntegerField('Intentos Post-Bloqueo', default=0)
+    last_attempt_at = models.DateTimeField('Último Intento', auto_now=True)
+
+    class Meta:
+        verbose_name = 'Control de Intentos de Login'
+        verbose_name_plural = 'Controles de Intentos de Login'
+
+    def __str__(self):
+        return f"{self.ip_address} (Fallos: {self.failed_attempts}, Fase: {self.stage})"
+
+
 def get_user_role(self):
     """Devuelve el rol del usuario garantizando compatibilidad con RBAC."""
     if hasattr(self, 'profile') and self.profile and self.profile.role:
