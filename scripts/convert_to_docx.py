@@ -304,6 +304,7 @@ if __name__ == '__main__':
         ('REPORTE_TECNICO_AUDITORIA.md', 'REPORTE_TECNICO_AUDITORIA.docx'),
         ('manual_usuario_seguro.md', 'MANUAL_USUARIO_SEGURO.docx'),
         ('politicas_y_matrices_seguridad.md', 'POLITICAS_Y_MATRICES_SEGURIDAD.docx'),
+        ('arquitectura.md', 'ARQUITECTURA_SISTEMA.docx'),
         ('sop_antiphishing.md', 'SOP_ANTIPHISHING.docx'),
         ('network_hardening.md', 'NETWORK_HARDENING.docx')
     ]
