@@ -17,6 +17,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from core.views import dashboard
+from users import views as users_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -26,5 +27,6 @@ urlpatterns = [
     path('expedientes/', include('records.urls')),
     path('pagos/', include('payments.urls')),
     path('auth/', include('users.urls')),
-    path('login/', include('users.urls')),
+    path('login/', users_views.login_view, name='login'),
+    path('logout/', users_views.logout_view, name='logout'),
 ]

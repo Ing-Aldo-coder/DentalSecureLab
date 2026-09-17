@@ -55,7 +55,13 @@ En este contexto asistencial y administrativo, el aseguramiento integral del sis
   auditlog.register(MedicalRecord)
   ```
 - `[CAPTURA DE PANTALLA TÉCNICA: Figura 1.0 - Configuración de django-auditlog en settings.py y registro del modelo MedicalRecord en el editor de código con líneas resaltadas]`
+  
+  ![Figura 1.0 - Configuración técnica de django-auditlog en settings.py](screenshots/figura_1_0_auditlog_settings.png)
+  
 - `[CAPTURA DE PANTALLA DE GITHUB: Figura 1.1 - Evidencia en GitHub del commit 5c9d9db en la rama security/01-auditlog-traceability con autor, fecha y diff]`
+  
+  ![Figura 1.1 - Commit en GitHub de trazabilidad y auditoría](screenshots/figura_1_1_github_commit_audit.png)
+  
 - **Justificación Técnica para Auditoría:**
   La implementación de `django-auditlog` erradica de forma concluyente la impunidad operativa derivada de la compartición histórica de cuentas al interceptar automáticamente cada ciclo de vida de los datos clínicos mediante un middleware transaccional. Cada modificación realizada sobre la tabla de expedientes médicos queda registrada en una bitácora inmutable en base de datos que almacena el identificador único del usuario autenticado, la dirección IP de origen de la estación clínica, la marca temporal exacta en UTC y el desglose json serializado de los campos alterados antes y después de la operación. Esta trazabilidad forense proporciona a la dirección médica la certeza jurídica e informática requerida para deslindar responsabilidades ante cualquier alteración fraudulenta de diagnósticos o tratamientos odontológicos.
 
@@ -95,7 +101,13 @@ En este contexto asistencial y administrativo, el aseguramiento integral del sis
       return render(request, 'records/record_detail.html', {'record': record})
   ```
 - `[CAPTURA DE PANTALLA TÉCNICA: Figura 2.0 - Código fuente en records/views.py y records/models.py demostrando el lookup mediante UUID v4 y la validación estricta de request.user.role]`
+  
+  ![Figura 2.0 - Protección IDOR con UUID v4 y validación de rol médico](screenshots/figura_2_0_idor_uuid.png)
+  
 - `[CAPTURA DE PANTALLA DE GITHUB: Figura 2.1 - Evidencia en GitHub del commit 305fb8b en security/02-idor-uuid-protection reflejando el diff y la eliminación de IDs secuenciales]`
+  
+  ![Figura 2.1 - Commit en GitHub de protección IDOR y UUID](screenshots/figura_2_1_github_commit_idor.png)
+  
 - **Justificación Técnica para Auditoría:**
   La sustitución sistemática de identificadores enteros incrementales por identificadores únicos universales (UUID versión 4 de 128 bits pseudoaleatorios) neutraliza por diseño los ataques de Referencia Directa Insegura a Objetos (IDOR / BOLA). Anteriormente, cualquier usuario con acceso al navegador podía iterar secuencialmente parámetros como `/records/1/`, `/records/2/` para extraer expedientes de pacientes ajenos de forma masiva. Al vincular la consulta de objetos a tokens criptográficamente impredecibles y anteponer validaciones estrictas en capa de vista que exigen sesión activa y membresía en los roles clínicos autorizados (`admin` o `doctor`), se garantiza el aislamiento estricto de la información confidencial frente al personal administrativo o atacantes perimetrales.
 
@@ -127,7 +139,13 @@ En este contexto asistencial y administrativo, el aseguramiento integral del sis
       ...
   ```
 - `[CAPTURA DE PANTALLA TÉCNICA: Figura 3.0 - Decorador @ratelimit en users/views.py y renderizado de respuesta HTTP 429 en el editor de código]`
+  
+  ![Figura 3.0 - Limitación de tasa IP ratelimit en autenticación](screenshots/figura_3_0_ratelimit_login.png)
+  
 - `[CAPTURA DE PANTALLA DE GITHUB: Figura 3.1 - Evidencia en GitHub del commit d6a0680 en security/03-ratelimit-login con registro de dependencias y rutas auth]`
+  
+  ![Figura 3.1 - Commit en GitHub de control de fuerza bruta](screenshots/figura_3_1_github_commit_ratelimit.png)
+  
 - **Justificación Técnica para Auditoría:**
   La exposición de formularios de autenticación sin restricciones de tasa representa una debilidad crítica que facilita a adversarios externos la ejecución de ataques automatizados de fuerza bruta, pulverización de contraseñas (password spraying) y ataque por diccionario contra las cuentas médicas. La integración de `django-ratelimit` en el controlador de inicio de sesión impone un umbral restrictivo de máximo cinco intentos por minuto por dirección IP de origen, emitiendo una respuesta HTTP 429 Too Many Requests con bloqueo temporal y notificación disuasoria al usuario. Este mecanismo frustra efectivamente cualquier herramienta automatizada de intrusión, protegiendo las credenciales de los ocho colaboradores sin penalizar el rendimiento legítimo de la clínica.
 
@@ -154,7 +172,13 @@ En este contexto asistencial y administrativo, el aseguramiento integral del sis
   CSRF_COOKIE_SAMESITE = 'Lax'
   ```
 - `[CAPTURA DE PANTALLA TÉCNICA: Figura 4.0 - Configuración de flags CSRF_COOKIE_HTTPONLY, CSRF_COOKIE_SECURE y CSRF_COOKIE_SAMESITE en settings.py]`
+  
+  ![Figura 4.0 - Configuración de cookies seguras y flags CSRF](screenshots/figura_4_0_csrf_settings.png)
+  
 - `[CAPTURA DE PANTALLA DE GITHUB: Figura 4.1 - Evidencia en GitHub del commit 234dbfa en security/04-csrf-hardening mostrando la protección de tokens y cookies]`
+  
+  ![Figura 4.1 - Commit en GitHub de endurecimiento CSRF](screenshots/figura_4_1_github_commit_csrf.png)
+  
 - **Justificación Técnica para Auditoría:**
   El ataque de Cross-Site Request Forgery permite a un sitio web malicioso forzar al navegador de una recepcionista o doctor autenticado a ejecutar acciones financieras o clínicas no deseadas sin su consentimiento explícito. Mediante la verificación exhaustiva de directivas `{% csrf_token %}` en la totalidad de las plantillas transaccionales de cobros y agenda médica, complementada con el endurecimiento de la cookie del token a través de las banderas `HttpOnly`, `Secure` y `SameSite=Lax`, se anula la posibilidad de que scripts maliciosos extraigan el token o que el navegador transmita cookies de sesión en contextos cruzados. Este blindaje preserva la integridad de los saldos financieros y los registros de citas frente a solicitudes forjadas.
 
@@ -202,7 +226,13 @@ En este contexto asistencial y administrativo, el aseguramiento integral del sis
   }
   ```
 - `[CAPTURA DE PANTALLA TÉCNICA: Figura 5.0 - Implementación de la señal connection_created en core/apps.py inyectando PRAGMA journal_mode=WAL y busy_timeout=5000]`
+  
+  ![Figura 5.0 - Activación de SQLite WAL mode y busy timeout 5000](screenshots/figura_5_0_sqlite_wal.png)
+  
 - `[CAPTURA DE PANTALLA DE GITHUB: Figura 5.1 - Evidencia en GitHub del commit f340b1c en security/05-sqlite-wal-mode con la verificación exitosa de WAL mode]`
+  
+  ![Figura 5.1 - Commit en GitHub de concurrencia SQLite WAL](screenshots/figura_5_1_github_commit_wal.png)
+  
 - **Justificación Técnica para Auditoría:**
   La operación simultánea de los cinco odontólogos en sus respectivos consultorios ingresando evoluciones clínicas junto a la recepcionista registrando cobros y citas generaba bloqueos críticos de concurrencia bajo el motor tradicional de SQLite (`sqlite3.OperationalError: database is locked`). Al activar el modo Write-Ahead Logging (WAL) mediante la señal de conexión de Django y establecer una tolerancia de espera activa de 5,000 milisegundos (`busy_timeout`), se desacoplan las operaciones de lectura de las de escritura, permitiendo que múltiples lectores consulten historiales clínicos concurrentemente sin bloquear la inserción de pagos en caja. Esta optimización arquitectónica garantiza una disponibilidad ininterrumpida del 99.9% durante las jornadas laborales.
 
@@ -237,7 +267,13 @@ En este contexto asistencial y administrativo, el aseguramiento integral del sis
   ALLOWED_HOSTS=127.0.0.1,localhost,dentalsecurelab.clinica.local
   ```
 - `[CAPTURA DE PANTALLA TÉCNICA: Figura 6.0 - Desacoplamiento de SECRET_KEY y DEBUG en settings.py mediante python-decouple y contenido de .env.example]`
+  
+  ![Figura 6.0 - Desacoplamiento de SECRET_KEY con python-decouple](screenshots/figura_6_0_decouple_settings.png)
+  
 - `[CAPTURA DE PANTALLA DE GITHUB: Figura 6.1 - Evidencia en GitHub del commit f619c0c en security/06-env-secret-decouple verificando la exclusión estricta de .env en .gitignore]`
+  
+  ![Figura 6.1 - Commit en GitHub de protección de secretos y .env](screenshots/figura_6_1_github_commit_decouple.png)
+  
 - **Justificación Técnica para Auditoría:**
   El almacenamiento de secretos criptográficos en texto plano dentro del código fuente y la persistencia de la directiva `DEBUG=True` representan fallas catastróficas que exponen variables de entorno, trazas completas de error y tokens de sesión ante cualquier excepción no controlada. Mediante el empleo de `python-decouple`, los secretos son inyectados exclusivamente en tiempo de ejecución desde variables de entorno locales protegidas, mientras que la exclusión formal del archivo `.env` en `.gitignore` previene filtraciones accidentales al repositorio público de GitHub. Adicionalmente, el forzado de `DEBUG=False` por defecto previene la fuga de información arquitectónica y de esquema de base de datos a usuarios no autorizados.
 
@@ -287,7 +323,13 @@ En este contexto asistencial y administrativo, el aseguramiento integral del sis
   }
   ```
 - `[CAPTURA DE PANTALLA TÉCNICA: Figura 7.0 - Configuración de proxy reverso Nginx con terminación TLS y directivas HSTS en deploy/nginx/dentalsecurelab.conf]`
+  
+  ![Figura 7.0 - Configuración de proxy Nginx TLS y cabeceras HSTS](screenshots/figura_7_0_nginx_ssl_hsts.png)
+  
 - `[CAPTURA DE PANTALLA DE GITHUB: Figura 7.1 - Evidencia en GitHub del commit 2b92de7 en security/07-https-hsts-headers mostrando los headers de transporte seguro]`
+  
+  ![Figura 7.1 - Commit en GitHub de transporte seguro HTTPS/HSTS](screenshots/figura_7_1_github_commit_nginx.png)
+  
 - **Justificación Técnica para Auditoría:**
   La transmisión de credenciales y registros clínicos sobre canales HTTP desprotegidos expone el tráfico de los consultorios a ataques pasivos de captura de paquetes (sniffing) y ataques activos de intermediario (Man-In-The-Middle / MITM) dentro de la red local. La configuración del servidor perimetral Nginx con certificados digitales robustos, protocolos TLS 1.2 y 1.3, redirección permanente HTTP a HTTPS (código 301) y la cabecera `Strict-Transport-Security` por un año (31,536,000 segundos) asegura que los navegadores establezcan conexiones cifradas de forma forzosa. La bandera `SESSION_COOKIE_SECURE` garantiza además que las cookies de sesión jamás viajen por canales no cifrados.
 
@@ -315,7 +357,13 @@ En este contexto asistencial y administrativo, el aseguramiento integral del sis
   directa al número certificado en el archivo físico institucional.
   ```
 - `[CAPTURA DE PANTALLA TÉCNICA: Figura 8.0 - Vista en editor de código del documento docs/sop_antiphishing.md con directivas OOB y matriz de banderas rojas]`
+  
+  ![Figura 8.0 - Procedimiento Operativo Estándar SOP anti-phishing y OOB](screenshots/figura_8_0_sop_antiphishing.png)
+  
 - `[CAPTURA DE PANTALLA DE GITHUB: Figura 8.1 - Evidencia en GitHub del commit b2facfb en security/08-antiphishing-procedure con el SOP formal de ciberseguridad humana]`
+  
+  ![Figura 8.1 - Commit en GitHub de protocolo humano de seguridad](screenshots/figura_8_1_github_commit_antiphishing.png)
+  
 - **Justificación Técnica para Auditoría:**
   El eslabón humano representa históricamente el vector de compromiso más explotado en organizaciones del sector salud mediante técnicas de engaño dirigidas a secretarias y personal de caja. La promulgación del documento normativo SOP-SEC-01 institucionaliza una barrera procesal estricta al estipular que cualquier alteración en directivas bancarias de pago a distribuidores de material odontológico deba validarse por un segundo canal de comunicación independiente. La capacitación obligatoria en identificación de dominios tipográficos fraudulentos y la política de no repudio ante incidentes garantizan una respuesta ágil de contención antes de que se produzca una pérdida financiera o fuga masiva de historiales médicos.
 
@@ -345,7 +393,13 @@ En este contexto asistencial y administrativo, el aseguramiento integral del sis
   find "${BACKUP_DIR}" -name "dentalsecurelab_*.tar.gz.gpg" -type f -mtime +30 -exec rm -f {} \;
   ```
 - `[CAPTURA DE PANTALLA TÉCNICA: Figura 9.0 - Script scripts/backup_db.sh en editor de código mostrando permisos chmod 600, snapshot en caliente y cifrado GPG AES-256]`
+  
+  ![Figura 9.0 - Script de respaldo en caliente, chmod 600 y cifrado AES-256](screenshots/figura_9_0_backup_script.png)
+  
 - `[CAPTURA DE PANTALLA DE GITHUB: Figura 9.1 - Evidencia en GitHub del commit c8aab27 en security/09-filesystem-db-protection con script de respaldo y auditoría forense]`
+  
+  ![Figura 9.1 - Commit en GitHub de script de respaldo automatizado](screenshots/figura_9_1_github_commit_backup.png)
+  
 - **Justificación Técnica para Auditoría:**
   La arquitectura de base de datos basada en archivos locales como SQLite expone el repositorio completo a robos físicos de disco o accesos laterales no autorizados por parte de otros usuarios del sistema operativo. Mediante el script automatizado `backup_db.sh`, se endurecen los permisos del sistema de archivos fijando una máscara `chmod 600` (exclusivo para el usuario del servicio Django) y se generan copias consistentes en caliente utilizando la API de respaldo de SQLite sin detener el servicio. El empaquetado resultante es cifrado con GPG utilizando el estándar criptográfico militar AES-256 y rotado automáticamente, garantizando que una eventual intrusión al servidor solo acceda a datos cifrados inaccesibles sin la clave maestra.
 
@@ -373,7 +427,13 @@ En este contexto asistencial y administrativo, el aseguramiento integral del sis
   - VLAN 20 (Invitados y Pacientes): 192.168.20.0/24 (Aislamiento de Clientes, sin acceso a VLAN 10).
   ```
 - `[CAPTURA DE PANTALLA TÉCNICA: Figura 10.0 - Documento docs/network_hardening.md en editor con diagrama descriptivo de topología y segmentación IEEE 802.1Q]`
+  
+  ![Figura 10.0 - Políticas de rack cerrado y segmentación VLAN 802.1Q](screenshots/figura_10_0_network_hardening.png)
+  
 - `[CAPTURA DE PANTALLA DE GITHUB: Figura 10.1 - Evidencia en GitHub del commit 217c97e en security/10-network-rack-hardening con la línea base de seguridad en red]`
+  
+  ![Figura 10.1 - Commit en GitHub de endurecimiento de red y VLANs](screenshots/figura_10_1_github_commit_network.png)
+  
 - **Justificación Técnica para Auditoría:**
   La convergencia no controlada de dispositivos personales de pacientes y terminales clínicas sobre un mismo segmento de red facilita ataques de reconocimiento perimetral, saturación de ancho de banda y propagación lateral de malware. La política de segmentación lógica mediante VLANs bajo el estándar IEEE 802.1Q aísla de forma absoluta el tráfico médico de los consultorios (VLAN 10) respecto al acceso inalámbrico de cortesía en la sala de espera (VLAN 20). Este esquema, aunado a la exigencia de resguardo físico del hardware en un gabinete rack cerrado con cerradura y la deshabilitación de interfaces administrativas en puertos WAN, previene sabotajes físicos e intrusiones externas.
 
@@ -388,6 +448,9 @@ En este contexto asistencial y administrativo, el aseguramiento integral del sis
 4. **Verificación de Sesión Activa:** Al autenticarse correctamente, el sistema lo redireccionará a su panel de trabajo y visualizará su nombre y rol (`ADMIN`, `DOCTOR` o `RECEPCIONISTA`) en el extremo superior derecho de la barra de navegación.
 
 - `[CAPTURA DE PANTALLA DE USUARIO: Figura 11 - Interfaz del formulario de autenticación segura mostrando campos protegidos y advertencia de límite de intentos por IP]`
+  
+  ![Figura 11 - Interfaz de autenticación segura individual con bloqueo por IP](screenshots/figura_11_usuario_login.png)
+  
 - **Párrafo Explicativo de Auditoría:**
   La autenticación individual e intransferible es el fundamento ineludible para garantizar el principio de rendición de cuentas dentro de DentalSecureLab. Cada inicio de sesión autentica de forma positiva la identidad del colaborador clínico o administrativo, permitiendo al motor de auditoría interna vincular fehacientemente cada receta, cobro o diagnóstico emitido a una persona física determinada. Este procedimiento operativo previene el uso de identidades anónimas en los consultorios y satisface plenamente las exigencias de auditorías forenses internacionales en materia de manejo de expedientes de salud.
 
@@ -400,6 +463,9 @@ En este contexto asistencial y administrativo, el aseguramiento integral del sis
 4. **Reanudación Segura de la Atención:** Para retomar la edición del expediente del paciente, el profesional médico debe reingresar su contraseña individual, reanudando la vista exactamente en el estado en que se encontraba sin pérdida de notas clínicas.
 
 - `[CAPTURA DE PANTALLA DE USUARIO: Figura 12 - Pantalla de bloqueo del sistema operativo y cierre de sesión seguro por inactividad tras 5 minutos de espera en consultorio]`
+  
+  ![Figura 12 - Bloqueo de pantalla en consultorio tras 5 minutos de inactividad](screenshots/figura_12_usuario_bloqueo.png)
+  
 - **Párrafo Explicativo de Auditoría:**
   El entorno dinámico de un consultorio dental, donde los profesionales alternan continuamente entre el teclado y la intervención odontológica física sobre el paciente, genera ventanas de vulnerabilidad donde las terminales quedan expuestas a miradas indiscretas o manipulación indebida. La imposición del bloqueo obligatorio tras cinco minutos de inactividad previene el acceso no autorizado a los antecedentes patológicos por parte de acompañantes de los pacientes o personal de intendencia. Este control físico-lógico mitiga el riesgo de filtraciones incidentales y asegura la estricta privacidad del paciente en consulta.
 
@@ -413,6 +479,9 @@ En este contexto asistencial y administrativo, el aseguramiento integral del sis
 5. **Cierre Inmediato de Formulario:** Una vez almacenado el pago, el sistema registrará la transacción en la bitácora auditable y mostrará el movimiento en la tabla cronológica general.
 
 - `[CAPTURA DE PANTALLA DE USUARIO: Figura 13 - Interfaz del módulo de cobros y formulario de registro de pagos con verificación de método y protección CSRF]`
+  
+  ![Figura 13 - Módulo de pagos y validación de cobros con token CSRF](screenshots/figura_13_usuario_pagos.png)
+  
 - **Párrafo Explicativo de Auditoría:**
   La captura de pagos en recepción representa el punto más sensible para la gestión financiera y tributaria de la clínica dental, requiriendo mecanismos inviolables contra alteraciones maliciosas de cifras. Al forzar la inclusión de tokens criptográficos CSRF en cada envío de formulario y restringir las modificaciones posteriores exclusivamente a personal con rol administrativo verificado, se previenen manipulaciones de montos o registros ficticios de cancelación de deudas. Este control garantiza la congruencia total entre los arqueos físicos de caja y los registros digitales presentados en los balances contables.
 
@@ -426,6 +495,9 @@ En este contexto asistencial y administrativo, el aseguramiento integral del sis
 5. **Registro de Bitácora:** Complete el formato físico de reporte de incidentes consignando la hora del suceso, la descripción de la acción realizada y las circunstancias operativas observadas.
 
 - `[CAPTURA DE PANTALLA DE USUARIO: Figura 14 - Formato de notificación de incidentes y canal de escalamiento rápido para personal asistencial de DentalSecureLab]`
+  
+  ![Figura 14 - Guía visual y formato de notificación de incidentes de seguridad](screenshots/figura_14_usuario_reporte_incidentes.png)
+  
 - **Párrafo Explicativo de Auditoría:**
   La celeridad en la contención de un incidente informático determina directamente la magnitud del impacto operativo y financiero que sufrirá la organización de salud. Establecer una guía clara y memorizable para que las secretarias y médicos desconecten el equipo afectado antes de que un malware cifre la base de datos o capture credenciales bancarias reduce el tiempo medio de respuesta a menos de cinco minutos. La formalización institucional de este procedimiento empodera al talento humano, convirtiéndolo en la primera línea activa de defensa de la clínica.
 
