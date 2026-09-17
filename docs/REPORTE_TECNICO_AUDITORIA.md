@@ -444,15 +444,21 @@ En este contexto asistencial y administrativo, el aseguramiento integral del sis
 ### 3.1. Procedimiento de Autenticación Individual e Inicio de Sesión
 1. **Acceso al Portal Seguro:** Abra el navegador web corporativo de la estación de trabajo y navegue hacia el enlace seguro `https://dentalsecurelab.clinica.local/login/`. Verifique que la barra de direcciones muestre el candado de seguridad TLS sin advertencias de certificado.
 2. **Ingreso de Credenciales Personales:** Introduzca su nombre de usuario único institucional y contraseña secreta en los campos correspondientes del formulario. Recuerde que el uso de cuentas compartidas o genéricas se encuentra terminantemente prohibido por la normativa interna de la clínica.
-3. **Validación del Límite de Intentos:** Si comete más de cinco errores consecutivos en el ingreso de su clave, el sistema bloqueará temporalmente el acceso desde su terminal durante 60 segundos por motivos de protección contra fuerza bruta.
-4. **Verificación de Sesión Activa:** Al autenticarse correctamente, el sistema lo redireccionará a su panel de trabajo y visualizará su nombre y rol (`ADMIN`, `DOCTOR` o `RECEPCIONISTA`) en el extremo superior derecho de la barra de navegación.
+3. **Control Progresivo de Intentos y Mitigación de Fuerza Bruta:**
+   - **Intento 1 (Primer Fallo):** Si la contraseña ingresada es incorrecta, el sistema muestra el mensaje estándar de credenciales inválidas sin desplegar aún la advertencia de límite, evitando alarmas innecesarias ante errores tipográficos accidentales.
+   - **Intento 2 (Activación de Alerta Preventiva):** Si se comete un segundo error consecutivo, se despliega automáticamente el recuadro de advertencia preventiva de ciberseguridad: `⚠️ Límite activo: Máximo 5 intentos/min por IP. Protección contra fuerza bruta y diccionario`, informando que restan 3 intentos disponibles.
+   - **Intentos 3 y 4:** El banner de alerta permanece visible actualizando en tiempo real el conteo regresivo de intentos restantes antes de la suspensión temporal.
+   - **Intento 5 (Bloqueo Inmediato por 5 Minutos):** Al registrarse el quinto fallo consecutivo, el sistema suspende inmediatamente el acceso de la cuenta/IP durante exactamente **5 minutos**, inhabilitando los campos del formulario y emitiendo el código HTTP 429 Too Many Requests.
+   - **Reseteo Automático:** Si el usuario ingresa la contraseña correcta en cualquiera de los pasos (por ejemplo, en el intento 3), el contador de fallos se reinicia automáticamente a cero.
+   - **Período de Gracia y Bloqueo Extendido (30 Minutos):** Transcurridos los 5 minutos de bloqueo, el sistema permite nuevos intentos. Si el usuario vuelve a fallar en 2 ocasiones consecutivas, se activa un bloqueo severo de **30 minutos** para mitigar ataques persistentes o dirigidos.
+4. **Verificación de Sesión Activa:** Al autenticarse correctamente, el sistema lo redireccionará a su panel de trabajo y visualizará su nombre y rol (`ADMIN`, `DOCTOR`, `NURSE` o `RECEPCIONISTA`) en el extremo superior derecho de la barra de navegación.
 
 - `[CAPTURA DE PANTALLA DE USUARIO: Figura 11 - Interfaz del formulario de autenticación segura mostrando campos protegidos y advertencia de límite de intentos por IP]`
   
   ![Figura 11 - Interfaz de autenticación segura individual con bloqueo por IP](screenshots/figura_11_usuario_login.png)
   
 - **Párrafo Explicativo de Auditoría:**
-  La autenticación individual e intransferible es el fundamento ineludible para garantizar el principio de rendición de cuentas dentro de DentalSecureLab. Cada inicio de sesión autentica de forma positiva la identidad del colaborador clínico o administrativo, permitiendo al motor de auditoría interna vincular fehacientemente cada receta, cobro o diagnóstico emitido a una persona física determinada. Este procedimiento operativo previene el uso de identidades anónimas en los consultorios y satisface plenamente las exigencias de auditorías forenses internacionales en materia de manejo de expedientes de salud.
+  La implementación del control progresivo de autenticación equilibra la usabilidad médica diaria con una estricta postura defensiva ante ataques de fuerza bruta automatizados o ataques de diccionario dirigidos. Al activar la advertencia preventiva exactamente en el intento 2, se previene que los colaboradores clínicos bloqueen sus terminales de manera involuntaria por descuidos menores, al tiempo que se establece una barrera infranqueable ante herramientas de intrusión masiva. El mecanismo de escalamiento a 5 y 30 minutos de suspensión temporal garantiza que los recursos computacionales y expedientes clínicos permanezcan blindados, garantizando la trazabilidad forense individual y el cumplimiento de las normativas de confidencialidad en salud digital.
 
 ---
 
