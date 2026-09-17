@@ -9,9 +9,22 @@
 </head>
 <body>
 
-    <header class="topbar">
-        <h1>DentalSecureLab</h1>
-        <span>Laboratorio de Seguridad</span>
+    <header class="topbar" style="display: flex; justify-content: space-between; align-items: center; padding: 12px 24px;">
+        <div>
+            <h1 style="margin: 0; font-size: 1.5rem;">DentalSecureLab</h1>
+            <span style="font-size: 0.85rem; color: #cbd5e1;">Laboratorio Clínico y Plataforma Segura</span>
+        </div>
+        <div style="display: flex; align-items: center; gap: 16px;">
+            {% if user.is_authenticated %}
+                <span style="color: #f8fafc; font-size: 0.9rem;">
+                    👤 <strong>{{ user.username }}</strong> 
+                    <span style="background: #0369a1; padding: 2px 8px; border-radius: 4px; font-size: 0.8rem; margin-left: 4px;">{{ user.role|upper }}</span>
+                </span>
+                <a href="{% url 'logout' %}" style="color: #fca5a5; text-decoration: none; font-size: 0.9rem; font-weight: 500;">Cerrar sesión</a>
+            {% else %}
+                <a href="{% url 'login' %}" style="color: #38bdf8; text-decoration: none; font-size: 0.9rem; font-weight: 500;">Iniciar sesión</a>
+            {% endif %}
+        </div>
     </header>
 
     <div class="layout">
