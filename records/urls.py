@@ -16,14 +16,26 @@ urlpatterns = [
     ),
 
     path(
-        '<int:pk>/',
+        '<uuid:uuid>/',
         views.record_detail,
         name='record_detail'
     ),
 
     path(
-        '<int:pk>/editar/',
+        '<int:pk>/',
+        views.record_detail,
+        name='record_detail_pk'
+    ),
+
+    path(
+        '<uuid:uuid>/editar/',
         views.record_update,
         name='record_update'
+    ),
+
+    path(
+        '<int:pk>/editar/',
+        views.record_update,
+        name='record_update_pk'
     ),
 ]

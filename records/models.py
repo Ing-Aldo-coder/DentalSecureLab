@@ -1,8 +1,16 @@
+import uuid
 from django.db import models
 from patients.models import Patient
 
 
 class MedicalRecord(models.Model):
+
+    uuid = models.UUIDField(
+        'Identificador Único (UUID)',
+        default=uuid.uuid4,
+        editable=False,
+        unique=True
+    )
 
     patient = models.OneToOneField(
         Patient,
