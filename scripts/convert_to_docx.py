@@ -302,6 +302,8 @@ if __name__ == '__main__':
 
     docs_to_convert = [
         ('REPORTE_TECNICO_AUDITORIA.md', 'REPORTE_TECNICO_AUDITORIA.docx'),
+        ('manual_usuario_seguro.md', 'MANUAL_USUARIO_SEGURO.docx'),
+        ('politicas_y_matrices_seguridad.md', 'POLITICAS_Y_MATRICES_SEGURIDAD.docx'),
         ('sop_antiphishing.md', 'SOP_ANTIPHISHING.docx'),
         ('network_hardening.md', 'NETWORK_HARDENING.docx')
     ]
@@ -311,6 +313,11 @@ if __name__ == '__main__':
         dst_path = os.path.join(target_dir, dst)
         if os.path.exists(src_path):
             print(f"Converting {src} -> {dst}...")
-            markdown_to_docx(src_path, dst_path, base_dir)
+            try:
+                markdown_to_docx(src_path, dst_path, base_dir)
+            except PermissionError:
+                print(f"  [AVISO] {dst} no pudo sobrescribirse porque está abierto en Microsoft Word. Ciérralo si deseas regenerarlo.")
+            except Exception as e:
+                print(f"  [ERROR] en {src}: {e}")
         else:
             print(f"Source not found: {src_path}")
