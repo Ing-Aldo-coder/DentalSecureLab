@@ -362,3 +362,90 @@ La licencia de distribución y reutilización del proyecto se encuentra pendient
 
 **DentalSecureLab**  
 *Un laboratorio educativo para aprender seguridad construyendo, protegiendo y evaluando una aplicación web.*
+
+```mermaid
+flowchart TD
+
+subgraph group_runtime["Django Runtime"]
+  node_manage["Django command entry<br/>Python CLI<br/>[manage.py]"]
+  node_settings["Runtime settings<br/>Django configuration<br/>[settings.py]"]
+  node_adapters["WSGI / ASGI adapters<br/>Django server adapters<br/>[wsgi.py]"]
+  node_router["Project URL dispatcher<br/>Django routing<br/>[urls.py]"]
+  node_shared_ui["Shared dashboard UI<br/>HTML / CSS templates<br/>[dashboard.html]"]
+  node_sqlite[("Local SQLite database<br/>persistent datastore")]
+end
+
+subgraph group_apps["Domain Apps"]
+  node_dashboard["Core dashboard<br/>aggregation views<br/>[views.py]"]
+  node_patients[("Patient master data<br/>Django models, forms, views<br/>[models.py]")]
+  node_agenda["Scheduling<br/>appointment models and views<br/>[models.py]"]
+  node_records[("Clinical records<br/>medical-record models and views<br/>[models.py]")]
+  node_record_uuid_migration["Record UUID migration<br/>Django migration"]
+  node_payments[("Payments<br/>payment models, forms, views<br/>[models.py]")]
+  node_identity["Authentication &amp; users<br/>user models and views<br/>[models.py]"]
+  node_login_tracker["Login attempt tracking<br/>security migration"]
+end
+
+subgraph group_security["Security &amp; Operations"]
+  node_nginx["Nginx reverse proxy<br/>deployment gateway"]
+  node_backup["Database backup<br/>operations script<br/>[backup_db.sh]"]
+  node_security_guidance["Hardening &amp; audit guidance<br/>security documentation"]
+  node_assessment_lab["Authorized assessment lab"]
+end
+
+node_manage -->|"loads"| node_settings
+node_manage -->|"migrates"| node_sqlite
+node_nginx -->|"proxies requests to"| node_adapters
+node_adapters -->|"serves"| node_router
+node_router -->|"routes to"| node_dashboard
+node_router -->|"routes to"| node_patients
+node_router -->|"routes to"| node_agenda
+node_router -->|"routes to"| node_records
+node_router -->|"routes to"| node_payments
+node_router -->|"routes to"| node_identity
+node_dashboard -->|"renders"| node_shared_ui
+node_dashboard -.->|"summarizes"| node_patients
+node_dashboard -.->|"summarizes"| node_agenda
+node_dashboard -.->|"summarizes"| node_records
+node_dashboard -.->|"summarizes"| node_payments
+node_agenda -->|"appointments belong to"| node_patients
+node_records -->|"records belong to"| node_patients
+node_record_uuid_migration -->|"evolves identifier"| node_records
+node_identity -->|"records attempts via"| node_login_tracker
+node_patients -->|"persists"| node_sqlite
+node_agenda -->|"persists"| node_sqlite
+node_records -->|"persists"| node_sqlite
+node_payments -->|"persists"| node_sqlite
+node_identity -->|"persists"| node_sqlite
+node_backup -->|"backs up"| node_sqlite
+node_security_guidance -.->|"guides hardening"| node_nginx
+node_assessment_lab -.->|"assesses authorized exposure"| node_nginx
+
+click node_manage "https://github.com/ing-aldo-coder/dentalsecurelab/blob/main/manage.py"
+click node_settings "https://github.com/ing-aldo-coder/dentalsecurelab/blob/main/config/settings.py"
+click node_adapters "https://github.com/ing-aldo-coder/dentalsecurelab/blob/main/config/wsgi.py"
+click node_router "https://github.com/ing-aldo-coder/dentalsecurelab/blob/main/config/urls.py"
+click node_shared_ui "https://github.com/ing-aldo-coder/dentalsecurelab/blob/main/templates/dashboard.html"
+click node_dashboard "https://github.com/ing-aldo-coder/dentalsecurelab/blob/main/core/views.py"
+click node_patients "https://github.com/ing-aldo-coder/dentalsecurelab/blob/main/patients/models.py"
+click node_agenda "https://github.com/ing-aldo-coder/dentalsecurelab/blob/main/agenda/models.py"
+click node_records "https://github.com/ing-aldo-coder/dentalsecurelab/blob/main/records/models.py"
+click node_record_uuid_migration "https://github.com/ing-aldo-coder/dentalsecurelab/blob/main/records/migrations/0002_medicalrecord_uuid.py"
+click node_payments "https://github.com/ing-aldo-coder/dentalsecurelab/blob/main/payments/models.py"
+click node_identity "https://github.com/ing-aldo-coder/dentalsecurelab/blob/main/users/models.py"
+click node_login_tracker "https://github.com/ing-aldo-coder/dentalsecurelab/blob/main/users/migrations/0002_loginattempttracker.py"
+click node_nginx "https://github.com/ing-aldo-coder/dentalsecurelab/blob/main/deploy/nginx/dentalsecurelab.conf"
+click node_backup "https://github.com/ing-aldo-coder/dentalsecurelab/blob/main/scripts/backup_db.sh"
+click node_security_guidance "https://github.com/ing-aldo-coder/dentalsecurelab/blob/main/docs/network_hardening.md"
+
+classDef toneNeutral fill:#f8fafc,stroke:#334155,stroke-width:1.5px,color:#0f172a
+classDef toneBlue fill:#dbeafe,stroke:#2563eb,stroke-width:1.5px,color:#172554
+classDef toneAmber fill:#fef3c7,stroke:#d97706,stroke-width:1.5px,color:#78350f
+classDef toneMint fill:#dcfce7,stroke:#16a34a,stroke-width:1.5px,color:#14532d
+classDef toneRose fill:#ffe4e6,stroke:#e11d48,stroke-width:1.5px,color:#881337
+classDef toneIndigo fill:#e0e7ff,stroke:#4f46e5,stroke-width:1.5px,color:#312e81
+classDef toneTeal fill:#ccfbf1,stroke:#0f766e,stroke-width:1.5px,color:#134e4a
+class node_manage,node_settings,node_adapters,node_router,node_shared_ui,node_sqlite toneBlue
+class node_dashboard,node_patients,node_agenda,node_records,node_record_uuid_migration,node_payments,node_identity,node_login_tracker toneAmber
+class node_nginx,node_backup,node_security_guidance,node_assessment_lab toneMint
+```
